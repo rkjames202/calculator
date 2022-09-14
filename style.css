@@ -1,0 +1,61 @@
+html {
+    box-sizing: border-box;
+    height: 100%;
+}
+
+*, *:before, *:after {
+    box-sizing: inherit;
+}
+
+body{
+    background-color: grey;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    min-height: 100%;
+}
+
+.expression{
+    display: none;
+}
+
+.calculator{
+    border: 1px solid black;
+    height: 510px;
+    width: 380px;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+}
+
+.display{
+    height: 100px;
+    background-color: white;
+    text-align: right;
+    margin-bottom: 5px;
+    font-size: 70px;
+}
+
+.buttons, .mutators, 
+.equality-button{
+    display: flex;    
+}
+
+.numbers{
+    display: flex;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    
+}
+
+.operations{
+    display: flex;
+    flex-wrap: wrap;
+}
+
+button{
+    height: 80px;
+    width: 70px;
+    flex-grow: 1;
+}
