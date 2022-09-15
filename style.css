@@ -38,7 +38,7 @@ body{
 }
 
 .buttons, .mutators, 
-.equality-button{
+.equals-button{
     display: flex;    
 }
 
@@ -54,7 +54,12 @@ body{
     flex-wrap: wrap;
 }
 
+.active-operator{
+    background-color: white;
+}
+
 button{
+    background-color: grey;
     height: 80px;
     width: 70px;
     flex-grow: 1;
