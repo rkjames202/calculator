@@ -7,18 +7,23 @@
     <title>Calculator</title>
     <script src="script.js" defer></script>
     <link href="style.css" rel="stylesheet">
+    <!--Icon from flaticon-->
+    <link href="img/calculator.png" rel="icon">
+    <!--fontawesome icon-->
+    <script src="https://kit.fontawesome.com/616e6c23e1.js" crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="expression">
-    </div>
+   
     <div class="calculator">
-        <div class="display">
-            0
+        <div class="screen">
+            <div class="expression">0</div>
+            <div class="display">0</div>
         </div>
         <div class="buttons">
             <div class="left-buttons">
                 <div class="mutators">
-                    <button class="clear-button">AC</button>
+                    <button class="clear-button">Clear</button>
                 </div>
                 <div class="numbers">
                     <button>7</button>
@@ -32,7 +37,7 @@
                     <button>3</button>
                     <button>0</button>
                     <button>.</button>
-                </div>           
+                </div>      
             </div>
             <div class="right-buttons">
                 <div class="operations">
@@ -47,5 +52,8 @@
             </div>
         </div>
     </div>
+    <footer>
+        <span>Made By Russell James</span> <a href="https://github.com/rkjames202" target="_blank"><i class="fa-brands fa-github"></a></i>
+    </footer>
 </body>
 </html>
