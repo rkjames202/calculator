@@ -88,6 +88,7 @@ function addButtonListeners(){
  */
 function addNumberListeners(){
     const numbers = document.querySelectorAll('.numbers button');
+
     numbers.forEach((number) => number.addEventListener('click', populateDisplay));
     numbers.forEach((number) => number.addEventListener('click', appendExpression));
 }
@@ -122,15 +123,29 @@ function populateDisplay(){
     let expression = document.querySelector('.expression').innerText;
     let operators= ['+', '-', '*', '/'];
 
-    //If display has placeholder value, operator button was clicked and there is an unfinished expression
-    if(display.innerText === '0' || (isOperatorActive() && operators.includes(expression.slice(-1)))){
-        display.innerText = this.innerText;
-    
-    //No more than 10 characters in display at once
-    }else if (display.innerText.length < 10){
-        display.innerText += this.innerText;
-    } 
+    //Test for decimal input first, appendExpression()
 
+    //If input is a decimal
+    if(this.innerText == '.'){
+        //If there isn't a decimal in current number and an operator hasn't been clicked
+        if(!display.innerText.includes('.') && !operators.includes(expression.slice(-1))){
+            display.innerText += this.innerText;
+            return;
+        }else if (isOperatorActive() && operators.includes(expression.slice(-1))){
+            display.innerText = 0 + this.innerText;
+        }
+    }
+
+    //If input is not decimal
+    if(this.innerText != '.'){
+        //If display has placeholder value, operator button was clicked and there is an unfinished expression
+        if(display.innerText === '0' || (isOperatorActive() && operators.includes(expression.slice(-1)))){
+            display.innerText = this.innerText;
+        //No more than 10 characters in display at once
+        }else if (display.innerText.length < 10){
+            display.innerText += this.innerText;
+        }
+    }
   
 }
 
@@ -163,11 +178,12 @@ function clearDisplay(){
     let operators = ['+', '-', '*', '/'];
     let trailingOperator;
     let result;
-    
+
     //Appends most recent user input to expression
     expression.innerText += this.innerText;
 
-    
+    findDecimalInExpression();
+
     //Tests if there is an expression that can be solved before most recent operator
    outer: for(let i = 0; i < operators.length ; i++){
         let operator = operators[i];
@@ -180,8 +196,7 @@ function clearDisplay(){
            
            //If there is no trailing operator, break loop
            if(!trailingOperator) break outer;
-           
-           console.log('here');
+
            let testExpression = expression.innerText.slice(0, -1); //get expression before
 
             let operands = testExpression.split(operator);
@@ -216,6 +231,31 @@ function clearDisplay(){
         expression.innerText = result + trailingOperator; //append the trailing operator to expression
    }
 
+ }
+
+ function findDecimalInExpression(){
+    const expression = document.querySelector('.expression');
+    let operators = ['+', '-', '*', '/'];
+    let operand;
+
+    if(expression.innerText.includes('.')){
+        //Look for operator in expression first
+        for(let i = 0; i < expression.innerText.length; i++){
+            if(operators.includes(expression.innerText[i])){
+                //Get the right operand
+                operand = expression.innerText.split(expression.innerText[i])[1];
+                break;
+            } else {
+                //No operator? Use the current number
+                operand = expression.innerText;
+            }
+        }
+
+        //If number has more than one decimal, remove it
+        if(operand.slice('-1').includes('.') && operand.slice(0, -1).includes('.')){
+            expression.innerText = expression.innerText.slice(0, -1);
+        }
+    }
  }
 
 /**
@@ -321,17 +361,26 @@ function resetDisplay(){
     const expression = document.querySelector('.expression');
     const numbers = document.querySelectorAll('.numbers button');
 
+    
     //If user wants to perform another operations, don't reset display
-    if(!isOperatorActive()){
-        display.innerText = this.innerText;
-        expression.innerText = this.innerText;
-
+    if(this.innerText == '.' && !isOperatorActive()){
+        //Append 0 in front of decimal if clicked
+        display.innerText = 0 + this.innerText;
+        expression.innerText = 0 + this.innerText;
+         
         //After event is fired, remove the event listeners
         numbers.forEach((number) => number.removeEventListener('click', resetDisplay));
-    }
+
+    }else if(!isOperatorActive()){    
+        display.innerText = this.innerText;
+        expression.innerText = this.innerText;
+     
+        numbers.forEach((number) => number.removeEventListener('click', resetDisplay));
+    } 
 }
 
-//Format long decimal numbers
+//commit
+//Format long decimal numbers (to 3 or 4 decimal points)
 //If number gets too long, display NaN
 //Try to break the calculator some more
 
