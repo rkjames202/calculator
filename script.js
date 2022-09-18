@@ -189,8 +189,9 @@ function clearDisplay(){
     let trailingOperator;
     let result;
 
-    //If display only has 0, the button clicked is not an operator or decimal. Append number
-    if(expression.innerText == 0 && !isNaN(this.innerText)){
+    //If display only has 0, the button clicked is a 
+    //number and the expression doesn't already have a decimal
+    if(expression.innerText == 0 && !isNaN(this.innerText) && !expression.innerText.includes('.')){
         expression.innerText = this.innerText;
     //If display hasn't reached its character limit
     }else if(display.innerText.length < 9){
