@@ -8,33 +8,41 @@ html {
 }
 
 body{
-    background-color: grey;
+    font-family: 'Lato', sans-serif;
+    background-color: lightslategrey;
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-direction: column;
     margin: 0;
     min-height: 100%;
 }
 
 .expression{
-    display: none;
+    font-size: 20px;
+    opacity: 0.7;
 }
 
 .calculator{
+    background-color: grey;
     border: 1px solid black;
-    height: 510px;
-    width: 380px;
+    height: 545px;
+    width: 390px;
     display: flex;
+    flex-shrink: 0;
     flex-direction: column;
     padding: 10px;
 }
 
-.display{
+.screen{
     height: 100px;
+    padding: 1px;
     background-color: white;
-    text-align: right;
     margin-bottom: 5px;
+    text-align: right;
     font-size: 70px;
+    border-radius: 5px;
+    width: 370px
 }
 
 .buttons, .mutators, 
@@ -46,7 +54,10 @@ body{
     display: flex;
     flex-wrap: wrap;
     align-content: flex-start;
-    
+}
+
+.numbers button{
+    background-color: teal;
 }
 
 .operations{
@@ -54,13 +65,43 @@ body{
     flex-wrap: wrap;
 }
 
-.active-operator{
-    background-color: white;
+.operations button{
+    background-color: lightseagreen
 }
 
-button{
-    background-color: grey;
+.equals-button button{
+    background-color: lightblue;
+}
+
+.active-operator{
+    background-color: white !important;
+}
+
+button{ 
+    margin: 2px;
+    border-radius: 10px;
+    font-family: inherit;
+    font-weight: bold;
+    font-size: 30px;
     height: 80px;
     width: 70px;
     flex-grow: 1;
+}
+
+footer{
+    font-size: 24px;
+    text-align: center;
+    width: 100%;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+}
+
+a{
+    text-decoration: inherit;
+    color: inherit;
+}
+
+a:hover{
+   color: white;
 }
