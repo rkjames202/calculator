@@ -70,8 +70,16 @@ function multiply(x, y){
  * @returns Result of expression
  */
 function divide(x, y){
-    if (x == 0 || y == 0){return "Can't / By 0!"}
-    return +x / +y;
+    const expression = document.querySelector('.expression');
+    const display = document.querySelector('.display');
+    //Left or right operand are 0
+    if (x == 0 || y == 0){
+        alert("Can't Divide By 0!");
+        expression.innerText = 0;
+        display.innerText = 0;
+    }else{
+        return +x / +y;
+    }
 }
 
 /**
@@ -120,7 +128,7 @@ function addOperationListeners(){
  */
 function populateDisplay(){
     const display = document.querySelector('.display');
-    let expression = document.querySelector('.expression').innerText;
+    let expression = document.querySelector('.expression');
     let operators= ['+', '-', '*', '/'];
 
     //Test for decimal input first, appendExpression()
@@ -128,21 +136,22 @@ function populateDisplay(){
     //If input is a decimal
     if(this.innerText == '.'){
         //If there isn't a decimal in current number and an operator hasn't been clicked
-        if(!display.innerText.includes('.') && !operators.includes(expression.slice(-1))){
+        if(!display.innerText.includes('.') && !operators.includes(expression.innerText.slice(-1))){
             display.innerText += this.innerText;
             return;
-        }else if (isOperatorActive() && operators.includes(expression.slice(-1))){
+        }else if (isOperatorActive() && operators.includes(expression.innerText.slice(-1))){
             display.innerText = 0 + this.innerText;
+            expression.innerText += 0 + this.innerText;
         }
     }
 
     //If input is not decimal
     if(this.innerText != '.'){
         //If display has placeholder value, operator button was clicked and there is an unfinished expression
-        if(display.innerText === '0' || (isOperatorActive() && operators.includes(expression.slice(-1)))){
+        if(display.innerText === '0' || (isOperatorActive() && operators.includes(expression.innerText.slice(-1)))){
             display.innerText = this.innerText;
         //No more than 10 characters in display at once
-        }else if (display.innerText.length < 10){
+        }else if (display.innerText.length < 9){
             display.innerText += this.innerText;
         }
     }
@@ -169,18 +178,27 @@ function clearDisplay(){
 
 
 /**
- * Stores the expression on webpage
+ * Stores the expression on webpage and prevents
  */
  function appendExpression(){
     let expression = document.querySelector('.expression');
     const display = document.querySelector('.display');
+    const numbers = document.querySelectorAll('.numbers button');
     
     let operators = ['+', '-', '*', '/'];
     let trailingOperator;
     let result;
 
-    //Appends most recent user input to expression
-    expression.innerText += this.innerText;
+    //If display only has 0, the button clicked is not an operator or decimal. Append number
+    if(expression.innerText == 0 && !isNaN(this.innerText)){
+        expression.innerText = this.innerText;
+    //If display hasn't reached its character limit
+    }else if(display.innerText.length < 9){
+        expression.innerText += this.innerText;
+    //If display has reached its character limit and operator is clicked
+    }else if(display.innerText.length == 9 && operators.includes(this.innerText)){
+        expression.innerText += this.innerText;
+    }
 
     findDecimalInExpression();
 
@@ -188,33 +206,31 @@ function clearDisplay(){
    outer: for(let i = 0; i < operators.length ; i++){
         let operator = operators[i];
         
-        //If there is an operator in the expression and there is a trailing operator
+        //If there is an operator in the expression along with a trailing
         if(expression.innerText.includes(operator) && 
            operators.includes(expression.innerText[expression.innerText.length -1])){
            
            trailingOperator = expression.innerText.slice(-1); //get trailing operator
-           
-           //If there is no trailing operator, break loop
-           if(!trailingOperator) break outer;
 
            let testExpression = expression.innerText.slice(0, -1); //get expression before
 
-            let operands = testExpression.split(operator);
+            let operands = testExpression.split(operator); //get possible left and right operand
             
             //If there is a left and right operand
             if(operands.length == 2 && operands[1] != '' && operands[0] != ''){  
                 result = operate(operands[0], operands[1], operator);
                 break outer;
             
-            //Put this into helper function
             //If there is a number followed by two trailing operators (ex. 4++)
             } else if((operators.includes(expression.innerText[expression.innerText.length -1]) &&
                         operators.includes(expression.innerText[expression.innerText.length - 2]))){
                 let number;          
                 //Search expression for first occurrence of operator
                 for(let n = 0; n < expression.innerText.length; n++){       
-                    //Get number and use expression found
+            
+                    //When operator is found...
                     if(operators.includes(expression.innerText[n])){
+                        //Get number 
                          number = expression.innerText.split(expression.innerText[n], 1);
                          //Use the number as both left and right operand and perform operation  
                          result = operate(number, number, expression.innerText[n]);  
@@ -225,19 +241,32 @@ function clearDisplay(){
         }
     }
 
-   //If there was an expression to be evaluated...
-   if(result != undefined){
+    result = formatResult(result);
+   
+    //If result is valid and not too long for calculator screen
+   if(result != undefined && result.toString().length <= 9){
         display.innerText = result; //display the result
         expression.innerText = result + trailingOperator; //append the trailing operator to expression
-   }
+    //If result is too long 
+    } else if((result && result.toString().length > 9) || (result && result.toString().length > 9 && expression.innerText.length > 12)){
+        display.innerText = 'NaN'
+        expression.innerText = 'NaN';
+        numbers.forEach((number) => number.addEventListener('click', resetDisplay));
+    }
 
  }
 
+ /**
+  * Finds additional decimal in operands if 
+  * there are any
+  * 
+  */
  function findDecimalInExpression(){
     const expression = document.querySelector('.expression');
     let operators = ['+', '-', '*', '/'];
     let operand;
 
+    //If there is a decimal anywhere in the expression
     if(expression.innerText.includes('.')){
         //Look for operator in expression first
         for(let i = 0; i < expression.innerText.length; i++){
@@ -266,8 +295,10 @@ function clearDisplay(){
 function evaluateExpression(){
     const display = document.querySelector('.display');
     const expression = document.querySelector('.expression');
+    const numbers = document.querySelectorAll('.numbers button');
     let operators= ['+', '-', '*', '/'];
 
+   
     let operands; //Store left and right operands
     let result; //Store result of expression
 
@@ -281,20 +312,25 @@ function evaluateExpression(){
         
     }
     
-    //If an invalid expression is entered don't change display 
+    result = formatResult(result);
+    //If an invalid expression or no expression is entered don't change display
     if(result === undefined && result != 0){
         result = display.innerText;
+        numbers.forEach((number) => number.addEventListener('click', resetDisplay));
+        return;
+    } else if (result.toString().length > 9){
+        result = 'NaN';
     }
+    
+   
 
     //Add expression to display and expression string
     display.innerText = result;
-
     expression.innerText = result;
 
     deactivateOperator();
 
     //When a number button is clicked after evaluating, reset display
-    const numbers = document.querySelectorAll('.numbers button');
     numbers.forEach((number) => number.addEventListener('click', resetDisplay));
 }
 
@@ -327,26 +363,29 @@ function isOperatorActive(){
     const operations = document.querySelectorAll('.operations button');
     let operatorActive = false;
 
-    operations.forEach((operator) =>{
-        if(operator.classList.contains('active-operator')){
+    for(let i = 0; i < operations.length; i++){
+        if(operations[i].classList.contains('active-operator')){
             operatorActive = true;
+            break;
         }
-    });
+    }
 
     return operatorActive;
 }
 
 /**
  * Deactivates active operator button
+ * 
  */
 function deactivateOperator(){
     const operations = document.querySelectorAll('.operations button');
     
-    operations.forEach((operator) =>{
-        if(operator.classList.contains('active-operator')){
-            operator.classList.remove('active-operator');
+    for(let i = 0; i < operations.length; i++){
+        if(operations[i].classList.contains('active-operator')){
+            operations[i].classList.remove('active-operator');
+            break;
         }
-    });
+    }
 }
 
 /**
@@ -367,21 +406,30 @@ function resetDisplay(){
         //Append 0 in front of decimal if clicked
         display.innerText = 0 + this.innerText;
         expression.innerText = 0 + this.innerText;
-         
         //After event is fired, remove the event listeners
         numbers.forEach((number) => number.removeEventListener('click', resetDisplay));
 
-    }else if(!isOperatorActive()){    
+    }else if(!isOperatorActive()){   
         display.innerText = this.innerText;
         expression.innerText = this.innerText;
-     
         numbers.forEach((number) => number.removeEventListener('click', resetDisplay));
     } 
 }
 
-//commit
-//Format long decimal numbers (to 3 or 4 decimal points)
-//If number gets too long, display NaN
-//Try to break the calculator some more
+/**
+ * Formats number to 4 decimal places if
+ * it has decimal point
+ * 
+ * @param {number} result 
+ * @returns formatted number
+ */
+function formatResult(result){
+    if(result && result.toString().includes('.')){
+        return +result.toFixed(4);
+    }
+
+    return result;
+}
+
 
 addButtonListeners();
